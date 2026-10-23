@@ -1,0 +1,17 @@
+{
+  "name": "comitupis-sync",
+  "private": true,
+  "description": "Prenos web porudžbina Pertini Toys u COMITUPIS",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "sync": "node sync.js",
+    "proba": "node sync.js --proba",
+    "obrisi-test": "node obrisi-test.js"
+  },
+  "dependencies": {
+    "mssql": "12.7.2"
+  }
+}
