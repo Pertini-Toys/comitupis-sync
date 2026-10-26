@@ -43,15 +43,6 @@ Test-NetConnection 192.168.0.101 -Port 1433        # TcpTestSucceeded : True
 
 **1. Node.js.** Instalirati LTS verziju (22 ili noviju) sa nodejs.org, sa podrazumevanim opcijama.
 
-**2. Folder.** Program se kopira u `C:\comitupis-sync\`. Ako je folder dobijen bez `node_modules`, iz tog foldera pokrenuti:
-
-```powershell
-cd C:\comitupis-sync
-npm ci
-```
-
-Ako računar nema izlaz na npm, Comit dostavlja folder zajedno sa `node_modules`, pa ovaj korak otpada.
-
 **3. Podešavanje (`.env`).** Kopirati `.env.example` u `.env` u istom folderu i popuniti:
 
 | Ključ | Vrednost |
@@ -89,30 +80,7 @@ node sync.js
 
 Na kraju piše `kraj: upisano N, već postojalo 0, grešaka 0`.
 
-**6. Task Scheduler.** U Task Scheduler-u: „Create Task…“ (ne „Basic Task“).
 
-| Kartica | Podešavanje |
-|---|---|
-| General | Ime `comitupis-sync`; „Run whether user is logged on or not“; nalog sa pravom čitanja `C:\comitupis-sync\` |
-| Triggers | New → „On a schedule“, Daily, „Repeat task every: 5 minutes“ (ili 10), „for a duration of: Indefinitely“, Enabled |
-| Actions | Start a program → Program: `C:\Program Files\nodejs\node.exe`, Arguments: `C:\comitupis-sync\sync.js` |
-| Settings | „If the task is already running: Do not start a new instance“; „Stop the task if it runs longer than: 30 minutes“ |
-
-Posle snimanja: desni klik na zadatak → „Run“, pa proveriti da „Last Run Result“ pokazuje `(0x0)` i da je u logu nov red (vidi ispod).
-
-Program radi samo na **jednom** računaru. Ne instalirati ga na drugi računar paralelno.
-
-## Svakodnevni rad
-
-Ništa ne treba raditi: Task Scheduler pokreće program, a program sam nadoknađuje sve što je propušteno dok računar ili mreža nisu radili.
-
-### Log
-
-Svako pokretanje upisuje redove u `C:\comitupis-sync\logs\sync-GGGG-MM.log`, jedan fajl po mesecu. U logu su samo brojevi porudžbina i iznosi, nikad podaci kupaca. Poslednjih 50 redova:
-
-```powershell
-Get-Content C:\comitupis-sync\logs\sync-2026-11.log -Tail 50
-```
 
 Normalno pokretanje izgleda ovako:
 
@@ -160,13 +128,7 @@ Prvo pogledati poslednje redove loga. Najčešće poruke:
 | `GREŠKA: nema .env…` ili `GREŠKA: .env: …` | `.env` ne postoji ili nešto nije popunjeno | ispraviti `.env` (vidi „Instalacija“, korak 3) |
 | `potvrđeno: …, nepoznato na sajtu: …` | sajt ne prepoznaje broj porudžbine | poslati Comit-u te redove iz loga |
 
-Program se može pokrenuti i ručno, iz PowerShell-a, da se greška vidi odmah na ekranu:
 
-```powershell
-cd C:\comitupis-sync
-node sync.js --proba     # samo prikaz, ništa ne upisuje
-node sync.js             # prenos, isto kao Task Scheduler
-```
 
 Ručno pokretanje je bezbedno i dok radi zakazani zadatak: drugo pokretanje se samo preskoči.
 
@@ -177,12 +139,6 @@ Ručno pokretanje je bezbedno i dok radi zakazani zadatak: drugo pokretanje se s
 - **Prelazak na drugi računar:** isključiti zadatak na starom računaru, pa ponoviti instalaciju na novom. Folder `logs` se može preneti, a ne mora.
 - **Interval:** menja se samo u Task Scheduler-u (Triggers).
 
-## Ne raditi
-
-- Ne menjati `PREFIKS_BROJA` i ne pokretati `obrisi-test.js`. To su alati Comit-a za testiranje.
-- Ne brisati i ne menjati ručno redove u PPC tabelama `ComitUPIS`-a koje ERP još nije preuzeo.
-- Ne pokretati program sa dva računara istovremeno.
-- Ne slati `.env`, token ili lozinku mejlom ili porukom.
 
 ## Tehnički detalji
 
