@@ -23,13 +23,12 @@ pertinitoys.com  ◄── HTTPS (odlazni) ──  računar u Pertini mreži  �
 
 ## Šta je potrebno
 
-| | |
-|---|---|
-| Računar | Windows (ili Linux) u Pertini mreži, uključen stalno, bar u radno vreme |
-| Softver | **Node.js 22 LTS ili noviji**, sa [nodejs.org](https://nodejs.org). Drugi drajveri (ODBC i sl.) ne trebaju |
-| Izlaz na internet | `https://pertinitoys.com` (port 443) |
-| Pristup bazi | `192.168.0.101`, port `1433`, SQL korisnik `comit` (upis u tri PPC tabele) |
-| Od Comit-a | folder sa programom i **token** za sajt |
+|                   |                                                                                                            |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| Računar           | Windows (ili Linux) u Pertini mreži, uključen stalno, bar u radno vreme                                    |
+| Softver           | **Node.js 22 LTS ili noviji**, sa [nodejs.org](https://nodejs.org). Drugi drajveri (ODBC i sl.) ne trebaju |
+| Izlaz na internet | `https://pertinitoys.com` (port 443)                                                                       |
+| Od Comit-a        | folder sa programom i **token** za sajt                                                                    |
 
 Provera iz PowerShell-a, na tom računaru:
 
@@ -45,19 +44,19 @@ Test-NetConnection 192.168.0.101 -Port 1433        # TcpTestSucceeded : True
 
 **3. Podešavanje (`.env`).** Kopirati `.env.example` u `.env` u istom folderu i popuniti:
 
-| Ključ | Vrednost |
-|---|---|
-| `PPC_ENDPOINT` | `https://pertinitoys.com/ppc-prenos-endpoint.php` (tačno ovako, bez ičega iza `.php`) |
-| `PPC_TOKEN` | token koji dostavlja Comit |
-| `COMITUPIS_HOST` | `192.168.0.101` |
-| `COMITUPIS_PORT` | `1433` |
-| `COMITUPIS_INSTANCE` | prazno (podrazumevana instanca) |
-| `COMITUPIS_DATABASE` | `ComitUPIS` |
-| `COMITUPIS_USER` | `comit` |
-| `COMITUPIS_PASSWORD` | lozinka korisnika `comit` |
-| `COMITUPIS_ENCRYPT`, `COMITUPIS_TRUST_CERT` | `1` i `1` (šifrovana veza; SQL Server ima samopotpisan sertifikat) |
-| `PREFIKS_BROJA` | **prazno**. Koristi ga samo Comit za testiranje |
-| `MAX_KRUGOVA` | `20` (ne menjati) |
+| Ključ                                       | Vrednost                                                                              |
+| ------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `PPC_ENDPOINT`                              | `https://pertinitoys.com/ppc-prenos-endpoint.php` (tačno ovako, bez ičega iza `.php`) |
+| `PPC_TOKEN`                                 | token koji dostavlja Comit                                                            |
+| `COMITUPIS_HOST`                            | `192.168.0.101`                                                                       |
+| `COMITUPIS_PORT`                            | `1433`                                                                                |
+| `COMITUPIS_INSTANCE`                        | prazno (podrazumevana instanca)                                                       |
+| `COMITUPIS_DATABASE`                        | `ComitUPIS`                                                                           |
+| `COMITUPIS_USER`                            | `comit`                                                                               |
+| `COMITUPIS_PASSWORD`                        | lozinka korisnika `comit`                                                             |
+| `COMITUPIS_ENCRYPT`, `COMITUPIS_TRUST_CERT` | `1` i `1` (šifrovana veza; SQL Server ima samopotpisan sertifikat)                    |
+| `PREFIKS_BROJA`                             | **prazno**. Koristi ga samo Comit za testiranje                                       |
+| `MAX_KRUGOVA`                               | `20` (ne menjati)                                                                     |
 
 Vrednost koja sadrži razmak ili `#` ide pod navodnike, npr. `COMITUPIS_PASSWORD="ab#c d"`.
 
@@ -79,8 +78,6 @@ node sync.js
 ```
 
 Na kraju piše `kraj: upisano N, već postojalo 0, grešaka 0`.
-
-
 
 Normalno pokretanje izgleda ovako:
 
@@ -105,30 +102,28 @@ Stari log fajlovi se mogu brisati po potrebi; program ih ne čita.
 
 ### Rezultat u Task Scheduler-u („Last Run Result“)
 
-| Rezultat | Značenje |
-|---|---|
-| `(0x0)` | sve u redu, ili nije bilo novih porudžbina |
-| `(0x1)` | greška: nema veze sa sajtom ili bazom, ili upis nije uspeo. Porudžbine čekaju i program ih pokušava u sledećem pokretanju. Razlog je u logu |
-| `(0x2)` | greška u podešavanju (`.env`). Program ne radi dok se ne ispravi |
+| Rezultat | Značenje                                                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `(0x0)`  | sve u redu, ili nije bilo novih porudžbina                                                                                                  |
+| `(0x1)`  | greška: nema veze sa sajtom ili bazom, ili upis nije uspeo. Porudžbine čekaju i program ih pokušava u sledećem pokretanju. Razlog je u logu |
+| `(0x2)`  | greška u podešavanju (`.env`). Program ne radi dok se ne ispravi                                                                            |
 
 ## Kad nešto ne radi
 
 Prvo pogledati poslednje redove loga. Najčešće poruke:
 
-| Poruka u logu | Uzrok | Šta raditi |
-|---|---|---|
-| `nema novih porudžbina` | sve je preneto | ništa |
-| `prethodno pokretanje još radi, ovo se preskače` | prethodno pokretanje je trajalo duže od intervala | ništa, ako je povremeno |
-| `dostignut MAX_KRUGOVA (20), ostatak u sledećem pokretanju` | posle dužeg prekida se skupilo mnogo porudžbina | ništa; ostatak ide u sledećim pokretanjima |
-| `GREŠKA: endpoint spremne: nema veze (…)` | računar nema internet ili sajt ne radi | proveriti `Test-NetConnection pertinitoys.com -Port 443`; ako internet radi, javiti Comit-u |
-| `GREŠKA: endpoint spremne: HTTP 403, zabranjeno` | token u `.env` ne odgovara tokenu na sajtu | javiti Comit-u |
-| `GREŠKA: COMITUPIS: 192.168.0.101:1433 nije dostupan (…)` | SQL Server ne radi, ili ga firewall ili mreža blokiraju | proveriti SQL Server i `Test-NetConnection 192.168.0.101 -Port 1433` |
-| `GREŠKA: COMITUPIS: Login failed for user 'comit'` | lozinka u `.env` ne odgovara lozinki u SQL Server-u | ispraviti `COMITUPIS_PASSWORD` u `.env` |
-| `58123: GREŠKA … (ništa nije upisano)` | jedna porudžbina nije prošla upis (npr. kolona ili ključ u bazi) | poslati Comit-u te redove iz loga; porudžbina čeka i ništa od nje nije upisano |
-| `GREŠKA: nema .env…` ili `GREŠKA: .env: …` | `.env` ne postoji ili nešto nije popunjeno | ispraviti `.env` (vidi „Instalacija“, korak 3) |
-| `potvrđeno: …, nepoznato na sajtu: …` | sajt ne prepoznaje broj porudžbine | poslati Comit-u te redove iz loga |
-
-
+| Poruka u logu                                               | Uzrok                                                            | Šta raditi                                                                                  |
+| ----------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `nema novih porudžbina`                                     | sve je preneto                                                   | ništa                                                                                       |
+| `prethodno pokretanje još radi, ovo se preskače`            | prethodno pokretanje je trajalo duže od intervala                | ništa, ako je povremeno                                                                     |
+| `dostignut MAX_KRUGOVA (20), ostatak u sledećem pokretanju` | posle dužeg prekida se skupilo mnogo porudžbina                  | ništa; ostatak ide u sledećim pokretanjima                                                  |
+| `GREŠKA: endpoint spremne: nema veze (…)`                   | računar nema internet ili sajt ne radi                           | proveriti `Test-NetConnection pertinitoys.com -Port 443`; ako internet radi, javiti Comit-u |
+| `GREŠKA: endpoint spremne: HTTP 403, zabranjeno`            | token u `.env` ne odgovara tokenu na sajtu                       | javiti Comit-u                                                                              |
+| `GREŠKA: COMITUPIS: 192.168.0.101:1433 nije dostupan (…)`   | SQL Server ne radi, ili ga firewall ili mreža blokiraju          | proveriti SQL Server i `Test-NetConnection 192.168.0.101 -Port 1433`                        |
+| `GREŠKA: COMITUPIS: Login failed for user 'comit'`          | lozinka u `.env` ne odgovara lozinki u SQL Server-u              | ispraviti `COMITUPIS_PASSWORD` u `.env`                                                     |
+| `58123: GREŠKA … (ništa nije upisano)`                      | jedna porudžbina nije prošla upis (npr. kolona ili ključ u bazi) | poslati Comit-u te redove iz loga; porudžbina čeka i ništa od nje nije upisano              |
+| `GREŠKA: nema .env…` ili `GREŠKA: .env: …`                  | `.env` ne postoji ili nešto nije popunjeno                       | ispraviti `.env` (vidi „Instalacija“, korak 3)                                              |
+| `potvrđeno: …, nepoznato na sajtu: …`                       | sajt ne prepoznaje broj porudžbine                               | poslati Comit-u te redove iz loga                                                           |
 
 Ručno pokretanje je bezbedno i dok radi zakazani zadatak: drugo pokretanje se samo preskoči.
 
@@ -138,7 +133,6 @@ Ručno pokretanje je bezbedno i dok radi zakazani zadatak: drugo pokretanje se s
 - **Nov token:** dostavlja ga Comit; menja se samo `PPC_TOKEN` u `.env`.
 - **Prelazak na drugi računar:** isključiti zadatak na starom računaru, pa ponoviti instalaciju na novom. Folder `logs` se može preneti, a ne mora.
 - **Interval:** menja se samo u Task Scheduler-u (Triggers).
-
 
 ## Tehnički detalji
 
