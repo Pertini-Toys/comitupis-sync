@@ -1,5 +1,5 @@
 // Zajedničke funkcije skripte za prenos porudžbina u COMITUPIS (sync.js, obrisi-test.js).
-// Skripta radi na računaru u Pertini mreži; opis: README.md i ppcContext.md („Faza 2b“) u backoffice repou.
+// Skripta radi na računaru u Pertini mreži; opis: context.md i ppcContext.md („Faza 2b“) u backoffice repou.
 import { appendFileSync, existsSync, mkdirSync, writeSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import net from 'node:net';
