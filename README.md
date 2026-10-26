@@ -51,8 +51,8 @@ Test-NetConnection 192.168.0.101 -Port 1433        # TcpTestSucceeded : True
 | `COMITUPIS_HOST`                            | `192.168.0.101`                                                                       |
 | `COMITUPIS_PORT`                            | `1433`                                                                                |
 | `COMITUPIS_INSTANCE`                        | prazno (podrazumevana instanca)                                                       |
-| `COMITUPIS_DATABASE`                        | `ComitUPIS`                                                                           |
-| `COMITUPIS_USER`                            | `comit`                                                                               |
+| `COMITUPIS_DATABASE`                        | Naziv baze                                                                            |
+| `COMITUPIS_USER`                            | naziv korisnika                                                                       |
 | `COMITUPIS_PASSWORD`                        | lozinka korisnika `comit`                                                             |
 | `COMITUPIS_ENCRYPT`, `COMITUPIS_TRUST_CERT` | `1` i `1` (šifrovana veza; SQL Server ima samopotpisan sertifikat)                    |
 | `PREFIKS_BROJA`                             | **prazno**. Koristi ga samo Comit za testiranje                                       |
